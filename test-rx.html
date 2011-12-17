@@ -1,170 +1,178 @@
-<!-- 
+<!--
 	Realtime testing of javascript regular expressions in your browser.
 	Copyright 2011 by Rajiv M Delwadia
 -->
 <html>
 <head>
-<title>Test Regex</title>
-<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/themes/base/jquery-ui.css" type="text/css" media="all" />
-<style>
-    #regex { width: 75%; }
-    .test {
-        padding: 1px;
-        border: 1px solid #888;
-        margin: 1px;
-        width: 49%;
-        display: inline-block;
-        vertical-align: top;
-        overflow: auto;
-    }
-    .test input { width: 100%; }
-    pre { vertical-align: top; }
-    textarea { width: 100%; }
-</style>
+	<title>Test Regex</title>
+	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/themes/base/jquery-ui.css" type="text/css" media="all" />
+	<style>
+		#regex {
+			width: 75%;
+		}
+		.test {
+			padding: 1px;
+			border: 1px solid #888;
+			margin: 1px;
+			width: 49%;
+			display: inline-block;
+			vertical-align: top;
+			overflow: auto;
+		}
+		.test input {
+			width: 100%;
+		}
+		pre {
+			vertical-align: top;
+		}
+		textarea {
+			width: 100%;
+		}
+	</style>
+	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
+	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js'></script>
+	<script type='text/javascript'>
 
-<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
-<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.6/jquery-ui.min.js'></script>
-<script type='text/javascript'>
+		$(function () {
+			var regexInput = $('#regex')
+			var outputLocation = $('#output')
+			var rx
 
-$(function(){
-    var regexInput = $('#regex')
-    var outputLocation = $('#output')
-    var rx
-    
-    regexInput.keyup(queueReevaluate)
-    $('.test input').live('keypress', queueRunTestCase)
-    $('#another').click(another)
-    
-    queueReevaluate()
-    
-    function queueReevaluate() {
-        setTimeout(reevaluate)
-    }
-    
-    function reevaluate() {
-        try {
-            rx = eval('(' + regexInput.val() + ')')
-            if (!(rx instanceof RegExp)) throw {
-                message: 'Not a regular expression'
-            }
-            outputLocation.text(rx.toString())
-        }
-        catch (ex) {
-            outputLocation.text(ex.message)
-            $('.test pre').text('Error')
-            return
-        }
-    
-        $('.test input').each(queueRunTestCase)
-    }
-    
-    function queueRunTestCase() {
-        var $this = $(this)
-        setTimeout(function() {
-            runTestCase($this)
-        })
-    }
-    
-    function runTestCase(testInput) {
-        var result
-        try {
-            result = evaluate(rx, testInput.val())
-        }
-        catch (ex) {
-            result = "Exception: " + ex.message
-        }
-        testInput.closest('.test').find('pre').text(result)
-    }
-    
-    function evaluate(rx, text) {
-        var result = "No match"
-        var matches = []
-        var match
-            
-        do {
-            match = rx.exec(text)
-            if (match) 
-                matches.push(match)
-        } while (rx.global && match)
-            
-        if (matches.length) {
-            var results = []
-            for (var m in matches) {
-                results.push("Match ")
-                if (rx.global) 
-                    results.push(m)
-                results.push(":\n")
-    
-                match = matches[m]
-                for (var p in match) {
-                    if (match[p] != null) {
-                        results.push("\t")
-                        results.push(p)
-                        results.push(": ")
-                        results.push(match[p])
-                        results.push("\n")
-                    }
-                }
-            }
-            result = results.join('')
-        }
-        
-        return result
-    }
-    
-    function another() {
-        var test = $('.test:last')
-        var newTest = test.clone()
-        test.after(newTest)
-    }
-    
-    $('#load').click(showDialog)
-    
-    function showDialog() {
-        $("<textarea/>").dialog({
-            buttons: {
-                OK: okDialog
-            },
-            modal: true,
-            width: 600,
-            height: 400,
-            resizable: false,
-            title: "Enter test cases",
-            close: function() {
-                $(this).remove()
-            }
-        }).css('width', '100%')
-    }
-    
-    function okDialog() {
-        var texts = $(this).val().split('\n')
-        $(this).dialog('close')
-    
-        var template = $('.test:first').remove()
-        $('.test').remove()
-    
-        for (var i in texts) {
-            var text = texts[i].trim()
-            if (text) template.clone().appendTo('#tests').find('input').val(text).each(queueRunTestCase)
-        }
-    }
-})
+			regexInput.keyup(queueReevaluate)
+			$('.test input').live('keypress', queueRunTestCase)
+			$('#another').click(another)
+
+			queueReevaluate()
+
+			function queueReevaluate() {
+				setTimeout(reevaluate)
+			}
+
+			function reevaluate() {
+				try {
+					rx = eval('(' + regexInput.val() + ')')
+					if (!(rx instanceof RegExp)) throw {
+						message: 'Not a regular expression'
+					}
+					outputLocation.text(rx.toString())
+				}
+				catch (ex) {
+					outputLocation.text(ex.message)
+					$('.test pre').text('Error')
+					return
+				}
+
+				$('.test input').each(queueRunTestCase)
+			}
+
+			function queueRunTestCase() {
+				var $this = $(this)
+				setTimeout(function () {
+					runTestCase($this)
+				})
+			}
+
+			function runTestCase(testInput) {
+				var result
+				try {
+					result = evaluate(rx, testInput.val())
+				}
+				catch (ex) {
+					result = "Exception: " + ex.message
+				}
+				testInput.closest('.test').find('pre').text(result)
+			}
+
+			function evaluate(rx, text) {
+				var result = "No match"
+				var matches = []
+				var match
+
+				do {
+					match = rx.exec(text)
+					if (match)
+						matches.push(match)
+				} while (rx.global && match)
+
+				if (matches.length) {
+					var results = []
+					for (var m in matches) {
+						results.push("Match ")
+						if (rx.global)
+							results.push(m)
+						results.push(":\n")
+
+						match = matches[m]
+						for (var p in match) {
+							if (match[p] != null) {
+								results.push("\t")
+								results.push(p)
+								results.push(": ")
+								results.push(match[p])
+								results.push("\n")
+							}
+						}
+					}
+					result = results.join('')
+				}
+
+				return result
+			}
+
+			function another() {
+				var test = $('.test:last')
+				var newTest = test.clone()
+				test.after(newTest)
+			}
+
+			$('#load').click(showDialog)
+
+			function showDialog() {
+				$("<textarea/>").dialog({
+					buttons: {
+						OK: okDialog
+					},
+					modal: true,
+					width: 600,
+					height: 400,
+					resizable: false,
+					title: "Enter test cases",
+					close: function () {
+						$(this).remove()
+					}
+				}).css('width', '100%')
+			}
+
+			function okDialog() {
+				var texts = $(this).val().split('\n')
+				$(this).dialog('close')
+
+				var template = $('.test:first').remove()
+				$('.test').remove()
+
+				for (var i in texts) {
+					var text = texts[i].trim()
+					if (text) template.clone().appendTo('#tests').find('input').val(text).each(queueRunTestCase)
+				}
+			}
+		})
 
 </script>
 </head>
 <body>
-
-Regex: <input type='text' id='regex' value='/([the]+)/ig' />
-<button id='another'>Add another test case</button>
-<button id='load'>Load test cases</button>
-<div id='output'></div>
-
-<div id='tests'>
-	<div class='test'>
-		<input type='text' value='The quick brown fox jumps over the lazy dog' />
-		<pre></pre>
+	Regex:
+	<input type='text' id='regex' value='/([the]+)/ig' />
+	<button id='another'>
+		Add another test case</button>
+	<button id='load'>
+		Load test cases</button>
+	<div id='output'>
 	</div>
-</div>
-
+	<div id='tests'>
+		<div class='test'>
+			<input type='text' value='The quick brown fox jumps over the lazy dog' />
+			<pre></pre>
+		</div>
+	</div>
 </body>
 </html>
