@@ -39,7 +39,7 @@
 			var rx
 
 			regexInput.keyup(queueReevaluate)
-			$('.test input').live('keypress', queueRunTestCase)
+			$('.test input').live('keyup', queueRunTestCase)
 			$('#another').click(another)
 
 			queueReevaluate()
