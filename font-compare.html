@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/1999/REC-html401-19991224/loose.dtd">
+<html>
+<head>	<title>Font Comparison Utility</title>
+<script type='text/javascript' src='http://code.jquery.com/jquery-1.4.2.min.js'></script>
+<script language=javascript>
+	// document.getElementById(div).style.fontFamily=fontname+", courier";
+	// size=size+"pt";
+	// document.getElementById(div).style.fontSize=size;var ns = (document.layers) ? 1:0
+	$(function(){
+		$('#samples pre').load('code.txt')
+		applyFonts()
+		$('input').change(applyFonts)
+	})
+
+	function applyFonts() {
+		var samples = $('#samples pre')
+		var controls = $("#controls td")
+		samples.each(function(i, sample) {
+			var css = {}
+			var inputs = $('input', controls.get(i))
+			inputs.each(function(i, input){
+				var name = $(input).attr('name')
+				var value = $(input).val()
+				css[name] = value
+			})
+			$(sample).css(css)
+		})
+		setTimeout(showDims, 1)
+	}
+
+	function showDims() {
+		var samples = $('#samples pre')
+		var controls = $("#controls td")
+		samples.each(function(i, sample) {
+			var spans = $('span', controls.get(i))
+			spans.each(function(i, span){
+				var name = $(span).attr('name')
+				var value = $(sample)[name]()
+				$(span).text(value)
+			})
+		})
+	}
+</script>
+<style>
+	pre { 
+	}
+	td { 
+		vertical-align: top; 
+		width: 500px;
+		overflow: auto;
+	}
+</style>
+</head>
+
+<body>
+<table border='0' cellspacing='0'>
+	<tr id='controls'>
+		<td>
+			Font: <input name='fontFamily' value='Verdana' /> 
+			Size: <input name='fontSize' value='10pt'/>
+			(<span name='width'>?</span> x <span name='height'>?</span>)
+		</td>
+		<td>
+			Font: <input name='fontFamily' value='Arial' />
+			Size: <input name='fontSize' value='10pt'/>
+			(<span name='width'>?</span> x <span name='height'>?</span>)
+		</td>
+	</tr>
+	<tr id='samples'>
+		<td>
+			<pre></pre>
+		</td>
+		<td>
+			<pre></pre>
+		</td>
+	</tr>
+</table>
+</body>
+</html>
