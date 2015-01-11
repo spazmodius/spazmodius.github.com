@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>	
+	<title>Reading Font Comparison Utility</title>
+	<script src='http://code.jquery.com/jquery-1.4.2.min.js'></script>
+	<script language=javascript>
+		function samples() {
+			return $('#samples .content')
+		}
+		function controlInputs(index) {
+			return $('input', $('#controls td').get(index))
+		}
+		function controlSpans(index) {
+			return $('span', $('#controls td').get(index))
+		}
+		
+		$(function(){
+			samples().load('prose.html')
+			applyFonts()
+			$('input').change(applyFonts)
+		})
+
+		function applyFonts() {
+			samples().each(function(i, sample) {
+				var css = {}
+				var inputs = controlInputs(i)
+				inputs.each(function(i, input){
+					var name = $(input).attr('name')
+					var value = $(input).val()
+					css[name] = value
+				})
+				$(sample).css(css)
+			})
+			setTimeout(showDims, 100)
+		}
+
+		function showDims() {
+			samples().each(function(i, sample) {
+				var spans = controlSpans(i)
+				spans.each(function(i, span){
+					var name = $(span).attr('name')
+					var value = $(sample)[name]()
+					$(span).text(value)
+				})
+			})
+		}
+	</script>
+	<style>
+		pre { 
+		}
+		td { 
+			vertical-align: top; 
+			width: 50%;
+			overflow: auto;
+		}
+	</style>
+</head>
+
+<body>
+<table border='0' cellspacing='0'>
+	<tr id='controls'>
+		<td>
+			Font: <input name='fontFamily' value='Verdana' /> 
+			Size: <input name='fontSize' value='10pt'/>
+			(<span name='width'>?</span> x <span name='height'>?</span>)
+		</td>
+		<td>
+			Font: <input name='fontFamily' value='Arial' />
+			Size: <input name='fontSize' value='10pt'/>
+			(<span name='width'>?</span> x <span name='height'>?</span>)
+		</td>
+	</tr>
+	<tr id='samples'>
+		<td>
+			<div class=content />
+		</td>
+		<td>
+			<div class=content />
+		</td>
+	</tr>
+</table>
+</body>
+</html>
